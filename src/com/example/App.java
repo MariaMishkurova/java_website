@@ -18,7 +18,9 @@ import java.nio.charset.StandardCharsets;
 public class App {
     public static void main(String[] args) {
         try {
-            // Создаем сервер на порту 8080
+            /* Создаем объект класса сервер с сокетом(InetSocketAddress) на порту 8080
+            InetSocketAddress - передача право компьютеру создать сокет (установить соединение по этому порту)
+            после этого программист может отправлять данные просто в сокет и принимать их оттуда */
             HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
 
             // Добавляем обработчики маршрутов
@@ -31,29 +33,48 @@ public class App {
             server.createContext("/images", new ImageHandler());
 
             // Запускаем сервер
-            server.setExecutor(null); // Используется дефолтный executor
             server.start();
-            System.out.println("Сервер запущен на http://localhost:8080/");
+            System.out.println("http://localhost:8080/");
+        /*IOException возникает, когда операция ввода/вывода завершается неудачей или прерывается. Это может
+        произойти во время таких сценариев, как чтение или запись в файл, сетевые коммуникации или при взаимодействии
+        с файловой системой.
+        */
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Обработчик для главной страницы
+    // Обработчик для cтраницы регистрации
+
     static class RegHandler implements HttpHandler {
+        //Метод вызывается сервером каждый раз, когда поступает HTTP-запрос.
+        //Объект HttpExchange содержит всю информацию о запросе и позволяет отправить ответ клиенту.
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             // Путь к файлу register.html
             Path path = Paths.get("resources", "register.html");
 
-            // Проверяем, существует ли файл
+            // Проверяем, существует ли файл по данному пути
             if (Files.exists(path)) {
                 byte[] response = Files.readAllBytes(path);  // Читаем файл в байты
-                exchange.sendResponseHeaders(200, response.length);  // Отправляем заголовки
+                /*Заголовки - данные, которые передаются
+                Перый аргумент - это числовой код состояния, который сообщает клиенту, как обработан запрос.
+                Примеры HTTP-кодов:
+                200 OK – запрос выполнен успешно.
+                404 Not Found – запрашиваемый ресурс не найден.
+                500 Internal Server Error – ошибка на сервере.
+                Второй аргумент - Если response.length, то сервер отправит точное количество байтов, указанное в этом параметре.
+                Если указано -1, сервер отправит "chunked transfer encoding" (фрагментированную передачу),
+                что полезно, когда заранее неизвестен размер ответа.*/
+                exchange.sendResponseHeaders(200, response.length);
+                //получаем поток http запроса
                 OutputStream os = exchange.getResponseBody();
-                os.write(response);  // Отправляем содержимое файла
+                // Отправляем содержимое файла в поток
+                os.write(response);
+                //закрываем этот поток
                 os.close();
             } else {
+                //то же самое, но другой код состояния и другой ответ
                 String response = "<html><body><h1>404 - Страница не найдена</h1></body></html>";
                 exchange.sendResponseHeaders(404, response.length());
                 OutputStream os = exchange.getResponseBody();
@@ -122,6 +143,8 @@ public class App {
             }
 
             byte[] cssBytes = Files.readAllBytes(cssPath);
+            //устанавливает заголовок с типом данных. При отправке это указать нельзя, потому что,
+            //видите ли, sendResponseHeaders принимает только код состояния и длину
             exchange.getResponseHeaders().set("Content-Type", "text/css");
             exchange.sendResponseHeaders(200, cssBytes.length);
 
@@ -155,54 +178,35 @@ public class App {
 
         }
     }
-
+//обработка кнопки зарегистрироваться
     static class RegButtonHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                // Если метод не POST, отправляем ошибку
-                String response = "Метод не поддерживается!";
-                exchange.sendResponseHeaders(405, response.length());
-                try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(response.getBytes());
-                }
-                return;
-            }
-
             try {
-                // Получаем данные из запроса
+                // Получаем данные из запроса (что ввели)
                 InputStream inputStream = exchange.getRequestBody();
+                //Создаем гибкую строку, которую можно менять
                 StringBuilder stringBuilder = new StringBuilder();
-                int ch;
+                int ch;// - байт
                 while ((ch = inputStream.read()) != -1) {
-                    stringBuilder.append((char) ch);
+                    stringBuilder.append((char) ch);//преобразование байта в символ
                 }
                 String requestBody = stringBuilder.toString();
-
-                // Логируем полученные данные
-                System.out.println("Получены данные формы: " + requestBody);
-
                 // Разбираем параметры
                 Map<String, String> data = parseFormData(requestBody);
-
                 String login = data.getOrDefault("login", null);
                 String password1 = data.getOrDefault("password1", null);
                 String password2 = data.getOrDefault("password2", null);
-
-                // Вывод в консоль для отладки
-                System.out.println("Логин: " + login);
-                System.out.println("Пароль 1: " + password1);
-                System.out.println("Пароль 2: " + password2);
-
-                exchange.getResponseHeaders().set("Location", "/login");
-                exchange.sendResponseHeaders(302, -1); // 302 Found -> Редирект
+                //Location - редирект
+                exchange.getResponseHeaders().set("Location", "/home");
+                exchange.sendResponseHeaders(302, -1);
                 exchange.close();
 
             } catch (Exception e){
                 String errorResponse = "<html><body><h1>Ошибка сервера!</h1></body></html>";
                 exchange.sendResponseHeaders(500, errorResponse.getBytes(StandardCharsets.UTF_8).length);
                 try (OutputStream os = exchange.getResponseBody()) {
-                    os.write(errorResponse.getBytes(StandardCharsets.UTF_8));
+                    os.write(errorResponse.getBytes());
                 }
             }
         }
