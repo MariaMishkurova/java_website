@@ -1,0 +1,307 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* Контейнер календаря */
+.calendar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Кнопки */
+.calendar-btn {
+    background: none;
+    border: none;
+    font-size: 32px; /* Размер иконки */
+    cursor: pointer;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.calendar-btn:hover {
+    color: #000;
+}
+
+/* Основной стиль календаря */
+#divCal {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+}
+
+/* Заголовок месяца */
+#divCal thead td {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+/* Дни недели */
+#divCal .days td {
+    font-weight: bold;
+    padding: 8px;
+}
+
+/* Обычные дни */
+#divCal td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+/* Сегодняшний день */
+#divCal .today {
+    background: #000;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 50%;
+}
+
+/* Дни предыдущего и следующего месяца */
+#divCal .not-current {
+    color: #aaa;
+}
+
+/* Наведение на дни */
+#divCal td:not(.not-current):hover {
+    background: #eee;
+    cursor: pointer;
+}
+
+/* Левая панель */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100%;
+    background-color: #1a1a1a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+.sidebar .menu-item,
+.sidebar .menu-item-home {
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* Центрируем горизонтально */
+    align-items: center; /* Центрируем вертикально */
+    width: 100%;
+    height: 60px; /* Одинаковая высота */
+    transition: background-color 0.3s ease;
+    margin: 10px 0; /* Добавляем одинаковые отступы */
+}
+.sidebar .menu-item a,
+.sidebar .menu-item-home a{
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       width: 100%;
+}
+.sidebar .menu-item:hover {
+    background-color: #333;
+}
+
+.sidebar .menu-item img {
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px;
+    max-height: 30px;
+}
+
+.sidebar .menu-item-home img {
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px;
+    max-height: 30px;
+}
+
+.sidebar .bottom_sidebar {
+    margin-top: auto;
+    margin-bottom: 20px; /* Поднимаем блок вверх */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar .bottom_sidebar .menu-item {
+    flex-grow: 0;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Контент */
+.main-content {
+    padding: 20px;
+    width: calc(100% - 270px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.greeting {
+    margin: 0 auto;
+    font-size: 30px;
+    font-weight: bold;
+}
+.right-content {
+    width:40%;
+    max-width: 800px;
+}
+
+/* Задачи на сегодня */
+.tasks-today {
+    width: 100%;
+    background-color: white;
+    border-radius: 30px;
+    height: 70vh;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    text-align: center;
+}
+
+
+.tasks-today h3 {
+    position: sticky;
+    top: 0;
+    background: white;
+    width: 100%;
+    text-align: center;
+    padding: 5px 0;
+    z-index: 10;
+    font-size: 24px;
+}
+
+
+.no_task {
+    font-size: 24px;
+    text-align: center;
+    margin-top: 200px;
+}
+
+.tasks-today .checkbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 35%;
+}
+
+.tasks-today .checkbox-item {
+    display: flex;
+    align-items: center;
+}
+
+.tasks-today .add-task {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.tasks-today .add-task:hover {
+    background-color: #0056b3;
+}
+
+/* Изображения */
+.image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+}
+
+.image-wrapper img {
+    max-width: 100%;
+    max-height: 250px;
+    width: 150px;
+    height: 150px;
+}
+
+/* Попап */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+}
+
+.popup h3 {
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.popup .input-task {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.popup .save-task {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.popup .save-task:hover {
+    background-color: #218838;
+}
+
+.popup .close-popup {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.popup .close-popup:hover {
+    background-color: #c82333;
+}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/style.css">
+</head>
+<body>
+<div class="center-container"> <!-- Обертка для центрирования -->
+    <aside class="asideReg">
+        <h3 class="create">Создать учётную запись</h3>
+        <form method="post" action="/reg_button">
+            <div class="main">
+                <div class="field">
+                    <label class="label">Логин
+                        <input class="inputregister" type="text" name="login">
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="label">Пароль
+                        <input class="inputregister" type="password" name="password1">
+                    </label>
+                </div>
+                <div class="field">
+                    <label class="label">Повторите пароль
+                        <input class="inputregister" type="password" name="password2">
+                    </label>
+                </div>
+            </div>
+            <div class="buttonRegDiv"><button class="buttonRegister">Зарегистрироваться</button></div>
+        </form>
+        <div class="alreadydiv">
+            <a href="/login"><p class="already">У меня уже есть аккаунт</p></a>
+        </div>
+    </aside>
+</div>
+
+</body>
+</html>

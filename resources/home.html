@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+
+
+<div class="sidebar">
+    <div class="menu-item-home">
+        <img src="/images/home.png" alt="Главная">
+    </div>
+    <div class="menu-item">
+        <a href="/"><img src="/images/calendar.png" alt="Календарь"></a>
+    </div>
+    <div class="menu-item">
+        <a href="/"><img src="/images/notes.png" alt="Заметки"></a>
+    </div>
+    <div class="bottom_sidebar">
+
+        <div class="menu-item">
+            <a href="/"> <img src="/images/logout.png" alt="Выйти"></a>
+        </div>
+
+
+
+    </div>
+</div>
+
+<div class="main-content">
+    <!-- Приветствие -->
+    <div class="greeting">
+        <p class="hello">Доброе утро!</p>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="left-content">
+            <div class="calendar-wrapper">
+                <button id="btnPrev" class="calendar-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+                <div id="divCal"></div>
+
+                <button id="btnNext" class="calendar-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="image-wrapper">
+                <img src="/images/cat.png" alt="Кот">
+            </div>
+        </div>
+
+        <div class="right-content">
+            <div class="tasks-today">
+                <h3>Задачи на сегодня</h3>
+                <button class="add-task" onclick="openPopup()">Добавить задачу</button>
+                <div class="checkbox-container">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Попап для добавления задач -->
+    <div class="popup" style="display: none;">
+        <h3>Добавить задачу</h3>
+        <form action="{% url 'add_task' %}" method="post">
+            {% csrf_token %}
+            <input type="text" id="taskName" name="taskName" class="input-task" placeholder="Введите задачу" />
+            <button type="submit" class="save-task">Сохранить</button>
+        </form>
+        <p>Войдите, чтобы добавлять задачи</p>
+        <button onclick="closePopup()" class="close-popup">Вернуться</button>
+    </div>
+
+</div>
+    <script>
+        var Cal = function(divId) {
+     //Сохраняем идентификатор div
+     this.divId = divId;
+     // Дни недели с понедельника
+     this.DaysOfWeek = [
+       'Пн',
+       'Вт',
+       'Ср',
+       'Чт',
+       'Пт',
+       'Сб',
+       'Вс'
+     ];
+     // Месяцы начиная с января
+     this.Months =['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+     //Устанавливаем текущий месяц, год
+     var d = new Date();
+     this.currMonth = d.getMonth();
+     this.currYear = d.getFullYear();
+     this.currDay = d.getDate();
+   };
+   // Переход к следующему месяцу
+   Cal.prototype.nextMonth = function() {
+     if ( this.currMonth == 11 ) {
+       this.currMonth = 0;
+       this.currYear = this.currYear + 1;
+     }
+     else {
+       this.currMonth = this.currMonth + 1;
+     }
+     this.showcurr();
+   };
+   // Переход к предыдущему месяцу
+   Cal.prototype.previousMonth = function() {
+     if ( this.currMonth == 0 ) {
+       this.currMonth = 11;
+       this.currYear = this.currYear - 1;
+     }
+     else {
+       this.currMonth = this.currMonth - 1;
+     }
+     this.showcurr();
+   };
+   // Показать текущий месяц
+   Cal.prototype.showcurr = function() {
+     this.showMonth(this.currYear, this.currMonth);
+   };
+   // Показать месяц (год, месяц)
+   Cal.prototype.showMonth = function(y, m) {
+     var d = new Date()
+     // Первый день недели в выбранном месяце
+     , firstDayOfMonth = new Date(y, m, 7).getDay()
+     // Последний день выбранного месяца
+     , lastDateOfMonth =  new Date(y, m+1, 0).getDate()
+     // Последний день предыдущего месяца
+     , lastDayOfLastMonth = m == 0 ? new Date(y-1, 11, 0).getDate() : new Date(y, m, 0).getDate();
+     var html = '<table>';
+     // Запись выбранного месяца и года
+     html += '<thead><tr>';
+     html += '<td colspan="7">' + this.Months[m] + ' ' + y + '</td>';
+     html += '</tr></thead>';
+     // заголовок дней недели
+     html += '<tr class="days">';
+     for(var i=0; i < this.DaysOfWeek.length;i++) {
+       html += '<td>' + this.DaysOfWeek[i] + '</td>';
+     }
+     html += '</tr>';
+     // Записываем дни
+     var i=1;
+     do {
+       var dow = new Date(y, m, i).getDay();
+       // Начать новую строку в понедельник
+       if ( dow == 1 ) {
+         html += '<tr>';
+       }
+       // Если первый день недели не понедельник показать последние дни предыдущего месяца
+       else if ( i == 1 ) {
+         html += '<tr>';
+         var k = lastDayOfLastMonth - firstDayOfMonth+1;
+         for(var j=0; j < firstDayOfMonth; j++) {
+           html += '<td class="not-current">' + k + '</td>';
+           k++;
+         }
+       }
+       // Записываем текущий день в цикл
+       var chk = new Date();
+       var chkY = chk.getFullYear();
+       var chkM = chk.getMonth();
+       if (chkY == this.currYear && chkM == this.currMonth && i == this.currDay) {
+         html += '<td class="today">' + i + '</td>';
+       } else {
+         html += '<td class="normal">' + i + '</td>';
+       }
+       // закрыть строку в воскресенье
+       if ( dow == 0 ) {
+         html += '</tr>';
+       }
+       // Если последний день месяца не воскресенье, показать первые дни следующего месяца
+       else if ( i == lastDateOfMonth ) {
+         var k=1;
+         for(dow; dow < 7; dow++) {
+           html += '<td class="not-current">' + k + '</td>';
+           k++;
+         }
+       }
+       i++;
+     }while(i <= lastDateOfMonth);
+     // Конец таблицы
+     html += '</table>';
+     // Записываем HTML в div
+     document.getElementById(this.divId).innerHTML = html;
+   };
+   // При загрузке окна
+   window.onload = function() {
+     // Начать календарь
+     var c = new Cal("divCal");
+     c.showcurr();
+     // Привязываем кнопки «Следующий» и «Предыдущий»
+     getId('btnNext').onclick = function() {
+       c.nextMonth();
+     };
+     getId('btnPrev').onclick = function() {
+       c.previousMonth();
+     };
+   }
+   // Получить элемент по id
+   function getId(id) {
+     return document.getElementById(id);
+   }
+    </script>
+
+
+</body>
+</html>
